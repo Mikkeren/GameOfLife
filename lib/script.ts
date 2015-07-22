@@ -44,10 +44,26 @@ class GameOfLife {
         ctx.fillRect(i*gridSize + 1, j*gridSize + 1, gridSize - 1, gridSize - 1);
       }
     }
+    ctx.fillStyle = "black";
+    ctx.fillRect(gridSize*(BoardSettings.GRID_WIDTH), 0, 1, gridSize*BoardSettings.GRID_HEIGHT+1);
+    ctx.fillRect(0, gridSize*(BoardSettings.GRID_HEIGHT), gridSize*BoardSettings.GRID_WIDTH+1, 1);
+  }
+
+  switchLife(i: number, j: number) : void {
+    this.board[i][j] = this.board[i][j] == 0 ? 1 : 0;
+    this.redraw();
   }
 }
 
 (function() {
   var game = new GameOfLife();
   game.redraw();
+
+  var canvas = <HTMLCanvasElement> document.getElementById("gameCanvas");
+  canvas.onclick = function(ev: MouseEvent) {
+    var i = Math.floor(ev.layerX / BoardSettings.GRID_SIZE);
+    var j = Math.floor(ev.layerY / BoardSettings.GRID_SIZE);
+    game.switchLife(i, j);
+  };
+
 }());
