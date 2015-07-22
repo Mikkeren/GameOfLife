@@ -16,7 +16,8 @@ module.exports = function (grunt) {
         },
         typescript: {
             base: {
-                src: ['lib/**/*.ts'],
+                src: ['lib/**/*.ts',
+                      'lib/*.ts'],
                 dest: 'js/scriptz.js',
                 options: {
                     module: 'commonjs',
