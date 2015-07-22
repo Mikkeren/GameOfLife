@@ -49,7 +49,6 @@ class GameOfLife {
 
   switchLife(i: number, j: number) : void {
     this.board[i][j] = this.board[i][j] == 0 ? 1 : 0;
-    this.redraw();
   }
 
   nextGeneration() : void {
@@ -78,7 +77,6 @@ class GameOfLife {
     this.generation++;
     this.generationCounterElement.innerHTML = this.generation.toString();
     this.board = newBoard;
-    this.redraw();
   }
 
   getLivingNeighbours(x : number, y: number) : number {
@@ -97,12 +95,17 @@ class GameOfLife {
 
 (function() {
   var game = new GameOfLife();
-  game.redraw();
+
+  var rafLoop = function() {
+    game.redraw();
+    requestAnimationFrame(rafLoop);
+  }
+  rafLoop();
 
   var canvas = <HTMLCanvasElement> document.getElementById("gameCanvas");
   canvas.onclick = function(ev: MouseEvent) {
-    var i = Math.floor((ev.layerX - canvas.offsetLeft) / BoardSettings.GRID_SIZE);
-    var j = Math.floor((ev.layerY - canvas.offsetTop) / BoardSettings.GRID_SIZE);
+    var i = Math.floor((ev.clientX - canvas.offsetLeft) / BoardSettings.GRID_SIZE);
+    var j = Math.floor((ev.clientY - canvas.offsetTop) / BoardSettings.GRID_SIZE);
     game.switchLife(i, j);
   };
 
