@@ -1,7 +1,7 @@
 class BoardSettings {
-  public static GRID_SIZE = 10;
-  public static GRID_HEIGHT = 100;
-  public static GRID_WIDTH = 100;
+  public static GRID_SIZE = 25;
+  public static GRID_HEIGHT = 3;
+  public static GRID_WIDTH = 3;
 }
 
 class GameOfLife {
@@ -12,13 +12,6 @@ class GameOfLife {
       this.board[i] = new Array<number>();
       for (var j = 0; j < BoardSettings.GRID_HEIGHT; j++) this.board[i][j] = 0;
     }
-    this.board[50][0] = 1;
-
-    this.board[4][4] = 1;
-    this.board[5][5] = 1;
-    this.board[5][6] = 1;
-    this.board[6][5] = 1;
-    this.board[6][6] = 1;
   }
 
   redraw() : void {
@@ -53,6 +46,49 @@ class GameOfLife {
     this.board[i][j] = this.board[i][j] == 0 ? 1 : 0;
     this.redraw();
   }
+
+  nextGeneration() : void {
+    var newBoard = new Array<Array<number>>();
+    for (var i = 0; i < BoardSettings.GRID_WIDTH; i++) {
+      newBoard[i] = new Array<number>();
+      for (var j = 0; j < BoardSettings.GRID_HEIGHT; j++) {
+        //Get neighbours and apply the four rules.
+        var neighbourCount = this.getLivingNeighbours(i, j);
+
+        //1. Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+        //3. Any live cell with more than three live neighbours dies, as if by overcrowding.
+        newBoard[i][j] = 0;
+
+        //2. Any live cell with two or three live neighbours lives on to the next generation.
+        if (this.board[i][j] == 1 && (neighbourCount == 2 || neighbourCount == 3)) {
+          newBoard[i][j] = 1;
+        }
+
+        //4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+        if (this.board[i][j] == 0 && neighbourCount == 3) {
+          newBoard[i][j] = 1;
+        }
+      }
+    }
+    this.board = newBoard;
+    this.redraw();
+  }
+
+  getLivingNeighbours(x : number, y: number) : number {
+    var count : number = 0;
+    for (var i = x - 1; i <= x + 1; i++) {
+      if (i >= 0 && i < BoardSettings.GRID_WIDTH) {
+        for (var j = y - 1; j <= y + 1; j++) {
+          if (j >= 0 && j < BoardSettings.GRID_HEIGHT) {
+            //TODO: Fix this.
+            console.log(i, j, this.board[i][j]);
+            if ((i != x  && j != y) && this.board[i][j] == 1) count++;
+          }
+        }
+      }
+    }
+    return count;
+  }
 }
 
 (function() {
@@ -65,5 +101,10 @@ class GameOfLife {
     var j = Math.floor(ev.layerY / BoardSettings.GRID_SIZE);
     game.switchLife(i, j);
   };
+
+  var button = <HTMLButtonElement> document.getElementById("stepButton");
+  button.onclick = function(ev: MouseEvent) {
+    game.nextGeneration();
+  }
 
 }());
