@@ -1,19 +1,24 @@
 class BoardSettings {
-  public static GRID_SIZE = 5;
+  public static GRID_SIZE = 10;
   public static GRID_HEIGHT = 100;
   public static GRID_WIDTH = 100;
 }
 
-
 class GameOfLife {
-  private board: number[][];
+  private board: number[][] = new Array<Array<number>>();
 
   constructor() {
     for (var i = 0; i < BoardSettings.GRID_WIDTH; i++) {
+      this.board[i] = new Array<number>();
       for (var j = 0; j < BoardSettings.GRID_HEIGHT; j++) this.board[i][j] = 0;
     }
+    this.board[50][0] = 1;
 
+    this.board[4][4] = 1;
     this.board[5][5] = 1;
+    this.board[5][6] = 1;
+    this.board[6][5] = 1;
+    this.board[6][6] = 1;
   }
 
   redraw() : void {
@@ -28,19 +33,17 @@ class GameOfLife {
         ctx.fillStyle = "black";
         //Top border
         ctx.fillRect(gridSize*i, gridSize*j, gridSize, 1);
-        //Bottom border
-        ctx.fillRect(gridSize*(i+1), gridSize*j, gridSize, 1);
         //Left border
-        ctx.fillRect(gridSize*i, gridSize*(j+1), 1, gridSize);
-        //Right border
-        ctx.fillRect(gridSize*i, gridSize*(j+1), 1, gridSize);
+        ctx.fillRect(gridSize*i, gridSize*j, 1, gridSize);
+
         if (this.board[i][j] == 0) {
           ctx.fillStyle = "white";
+        } else {
+          ctx.fillStyle = "HotPink"
         }
-        ctx.fillRect(i*gridSize+1, j*gridSize+1, gridSize-2, gridSize-2);
+        ctx.fillRect(i*gridSize + 1, j*gridSize + 1, gridSize - 1, gridSize - 1);
       }
     }
-
   }
 }
 
