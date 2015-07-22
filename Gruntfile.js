@@ -19,7 +19,7 @@ module.exports = function (grunt) {
                 src: ['lib/**/*.ts'],
                 dest: 'js/scriptz.js',
                 options: {
-                    module: 'amd',
+                    module: 'commonjs',
                     target: 'es5'
                 }
             }
