@@ -1,13 +1,19 @@
 class BoardSettings {
-  public static GRID_SIZE = 25;
-  public static GRID_HEIGHT = 3;
-  public static GRID_WIDTH = 3;
+  public static GRID_SIZE = 10;
+  public static GRID_HEIGHT = 50;
+  public static GRID_WIDTH = 50;
 }
 
 class GameOfLife {
   private board: number[][] = new Array<Array<number>>();
+  private generation: number = 0;
+
+  private canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("gameCanvas");
+  private generationCounterElement: HTMLElement = document.getElementById("generationCounter");
 
   constructor() {
+    this.canvas.width = BoardSettings.GRID_WIDTH * BoardSettings.GRID_SIZE + 1;
+    this.canvas.height = BoardSettings.GRID_HEIGHT * BoardSettings.GRID_SIZE + 1;
     for (var i = 0; i < BoardSettings.GRID_WIDTH; i++) {
       this.board[i] = new Array<number>();
       for (var j = 0; j < BoardSettings.GRID_HEIGHT; j++) this.board[i][j] = 0;
@@ -15,8 +21,7 @@ class GameOfLife {
   }
 
   redraw() : void {
-    var canvas = <HTMLCanvasElement> document.getElementById("gameCanvas");
-    var ctx  = <CanvasRenderingContext2D> canvas.getContext("2d");
+    var ctx  = <CanvasRenderingContext2D> this.canvas.getContext("2d");
 
     var gridSize = BoardSettings.GRID_SIZE;
 
@@ -70,6 +75,8 @@ class GameOfLife {
         }
       }
     }
+    this.generation++;
+    this.generationCounterElement.innerHTML = this.generation.toString();
     this.board = newBoard;
     this.redraw();
   }
@@ -77,14 +84,11 @@ class GameOfLife {
   getLivingNeighbours(x : number, y: number) : number {
     var count : number = 0;
     for (var i = x - 1; i <= x + 1; i++) {
-      if (i >= 0 && i < BoardSettings.GRID_WIDTH) {
-        for (var j = y - 1; j <= y + 1; j++) {
-          if (j >= 0 && j < BoardSettings.GRID_HEIGHT) {
-            //TODO: Fix this.
-            console.log(i, j, this.board[i][j]);
-            if ((i != x  && j != y) && this.board[i][j] == 1) count++;
-          }
-        }
+      for (var j = y - 1; j <= y + 1; j++) {
+        if (i < 0 || j < 0) continue;
+        if (i >= BoardSettings.GRID_WIDTH || j >= BoardSettings.GRID_HEIGHT) continue;
+        if (i == x && j == y) continue;
+        if (this.board[i][j] == 1) count++;
       }
     }
     return count;
@@ -97,14 +101,13 @@ class GameOfLife {
 
   var canvas = <HTMLCanvasElement> document.getElementById("gameCanvas");
   canvas.onclick = function(ev: MouseEvent) {
-    var i = Math.floor(ev.layerX / BoardSettings.GRID_SIZE);
-    var j = Math.floor(ev.layerY / BoardSettings.GRID_SIZE);
+    var i = Math.floor((ev.layerX - canvas.offsetLeft) / BoardSettings.GRID_SIZE);
+    var j = Math.floor((ev.layerY - canvas.offsetTop) / BoardSettings.GRID_SIZE);
     game.switchLife(i, j);
   };
 
-  var button = <HTMLButtonElement> document.getElementById("stepButton");
-  button.onclick = function(ev: MouseEvent) {
+  var stepButton = <HTMLButtonElement> document.getElementById("stepButton");
+  stepButton.onclick = function(ev: MouseEvent) {
     game.nextGeneration();
   }
-
 }());
