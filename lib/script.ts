@@ -7,9 +7,12 @@ class BoardSettings {
 class GameOfLife {
   private board: number[][] = new Array<Array<number>>();
   private generation: number = 0;
+  private playTimer;
 
   private canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("gameCanvas");
   private generationCounterElement: HTMLElement = document.getElementById("generationCounter");
+
+  public isPlaying : boolean = false;
 
   constructor() {
     this.canvas.width = BoardSettings.GRID_WIDTH * BoardSettings.GRID_SIZE + 1;
@@ -91,6 +94,16 @@ class GameOfLife {
     }
     return count;
   }
+
+  play(interval: number) : void {
+    this.isPlaying = true;
+    this.playTimer = window.setInterval(() => this.nextGeneration(), interval);
+  }
+
+  pause() : void {
+    this.isPlaying = false;
+    window.clearInterval(this.playTimer);
+  }
 }
 
 (function() {
@@ -112,5 +125,16 @@ class GameOfLife {
   var stepButton = <HTMLButtonElement> document.getElementById("stepButton");
   stepButton.onclick = function(ev: MouseEvent) {
     game.nextGeneration();
-  }
+  };
+
+  var playButton = <HTMLButtonElement> document.getElementById("playButton");
+  playButton.onclick = function(ev: MouseEvent) {
+    if (game.isPlaying) {
+      game.pause();
+      playButton.innerHTML = "Play";
+    } else {
+      game.play(200);
+      playButton.innerHTML = "Pause";
+    }
+  };
 }());
