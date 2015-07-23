@@ -2,6 +2,9 @@ class BoardSettings {
   public static GRID_SIZE = 10;
   public static GRID_HEIGHT = 50;
   public static GRID_WIDTH = 50;
+  public static GRID_COLOR = "black";
+  public static CELL_COLOR_DEAD = "white";
+  public static CELL_COLOR_ALIVE = "HotPink";
 }
 
 class GameOfLife {
@@ -31,21 +34,21 @@ class GameOfLife {
     for (var i = 0; i < BoardSettings.GRID_WIDTH; i++) {
       for (var j = 0; j < BoardSettings.GRID_HEIGHT; j++) {
         //Draw borders.
-        ctx.fillStyle = "black";
+        ctx.fillStyle = BoardSettings.GRID_COLOR;
         //Top border
         ctx.fillRect(gridSize*i, gridSize*j, gridSize, 1);
         //Left border
         ctx.fillRect(gridSize*i, gridSize*j, 1, gridSize);
 
         if (this.board[i][j] == 0) {
-          ctx.fillStyle = "white";
+          ctx.fillStyle = BoardSettings.CELL_COLOR_DEAD;
         } else {
-          ctx.fillStyle = "HotPink"
+          ctx.fillStyle = BoardSettings.CELL_COLOR_ALIVE;
         }
         ctx.fillRect(i*gridSize + 1, j*gridSize + 1, gridSize - 1, gridSize - 1);
       }
     }
-    ctx.fillStyle = "black";
+    ctx.fillStyle = BoardSettings.GRID_COLOR;
     ctx.fillRect(gridSize*(BoardSettings.GRID_WIDTH), 0, 1, gridSize*BoardSettings.GRID_HEIGHT+1);
     ctx.fillRect(0, gridSize*(BoardSettings.GRID_HEIGHT), gridSize*BoardSettings.GRID_WIDTH+1, 1);
   }
@@ -133,7 +136,7 @@ class GameOfLife {
       game.pause();
       playButton.innerHTML = "Play";
     } else {
-      game.play(200);
+      game.play(100);
       playButton.innerHTML = "Pause";
     }
   };
